@@ -1,0 +1,25 @@
+body {
+    font-family: sans-serif;
+}
+
+pre {
+    margin-top: 0em;
+    background-color: #dddddd;
+    padding: 1em;
+    white-space: pre-wrap;
+}
+
+.license {
+    margin-bottom: 0em;
+}
+
+.license_version {
+    margin-top:0em;
+    font-size: 1em;
+}
+
+h3 {
+    margin-top:2em;
+    margin-bottom: 0.3em;
+    font-size: 1em;
+}

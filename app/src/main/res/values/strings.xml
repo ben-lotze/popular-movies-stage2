@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name_short">UBPMDb</string>
+    <string name="app_name">Uncle Ben\'s Popular Movies</string>
+    <string name="app_name_full">Uncle Ben\'s Popular Movies Database</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="screen_about">About</string>
+
+    <string name="action_item_movies_best_rating">Best rating</string>
+    <string name="action_item_movies_most_popular">Most popular</string>
+
+    <string name="original_title">Original title:</string>
+    <string name="description_not_available">No description available.</string>
+    <string name="funny_rating_awesome">But it must be awesome considering its rating.</string>
+    <string name="funny_rating_not_good">But you may want to reconsider watching it with a rating this low... ;-)</string>
+
+
+    <string name="pref_languages_key">pref_languages_key</string>
+    <string name="pref_languages_title">Language for movie data</string>
+    <string name="pref_language_default">@string/pref_language_en_key</string>
+    <string name="pref_language_de_key">de_DE</string>
+    <string name="pref_language_de_value">Deutsch</string>
+    <string name="pref_language_en_key">en_US</string>
+    <string name="pref_language_en_value">English</string>
+
+    <string name="pref_json_parser_title">Json Parser Engine</string>
+    <string name="pref_json_parser_key">pref_key_json_parser</string>
+    <string name="pref_json_parser_by_hand_key">by_hand</string>
+    <string name="pref_json_parser_by_hand_value">Bare hands (JSONObjects)</string>
+    <string name="pref_json_parser_gson_key">gson</string>
+    <string name="pref_json_parser_gson_value">Google Gson</string>
+
+
+    <string name="about_app">This app was created as part of the <b>Google Developer Nanodegree Scholarship 2018</b> from Udacity after taking part in the Google Developer Challenge Scholarship 2017.</string>
+    <string name="about_tmdb">UBPMDb (Uncle Ben\s Movie Database) uses <b>TMDb (The Movie Database)</b> - a community built multilingual movie database for movie details, fanart and posters - to practice and demonstrate some key elements of Android development like RecyclerView, Adapters, LoaderManager, Settings, Json parsing, CardViews and ConstraintLayout.</string>
+    <string name="no_connection_available">No connection available</string>
+    <string name="no_api_key_available">Please insert your TMDb API key in gradle.properties
+    </string>
+</resources>

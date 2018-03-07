@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <ListPreference
+        android:key="@string/pref_languages_key"
+        android:title="@string/pref_languages_title"
+        android:defaultValue="@string/pref_language_de_key"
+        android:entries="@array/pref_languages_values"
+        android:entryValues="@array/pref_languages_keys"
+        />
+
+
+    <ListPreference
+        android:key="@string/pref_json_parser_key"
+        android:title="@string/pref_json_parser_title"
+        android:defaultValue="@string/pref_json_parser_by_hand_key"
+        android:entries="@array/pref_json_parser_values"
+        android:entryValues="@array/pref_json_parser_keys"
+
+        />
+
+
+
+
+
+</PreferenceScreen>
