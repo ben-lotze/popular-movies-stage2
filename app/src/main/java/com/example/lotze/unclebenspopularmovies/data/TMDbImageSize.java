@@ -12,5 +12,5 @@ public enum TMDbImageSize {
     w500,
     w780,
     original
-    ;
+
 }

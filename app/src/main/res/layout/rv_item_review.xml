@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:background="#FFF">
+
+
+    <!--app:layout_constraintTop_toTopOf="parent"-->
+    <!--app:layout_constraintLeft_toLeftOf="parent"-->
+    <TextView
+        android:id="@+id/rv_item_reviews_author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="16sp"
+
+        />
+
+    <!--app:layout_constraintTop_toBottomOf="@id/rv_item_reviews_author"-->
+    <!--app:layout_constraintLeft_toLeftOf="@id/rv_item_reviews_author"-->
+    <!--app:layout_constraintRight_toRightOf="parent"-->
+    <TextView
+        android:id="@+id/rv_item_reviews_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        />
+
+    <!--<View-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="@color/colorRvRating" />-->
+
+
+</LinearLayout>

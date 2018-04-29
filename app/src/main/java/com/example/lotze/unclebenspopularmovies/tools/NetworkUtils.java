@@ -5,6 +5,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.content.AsyncTaskLoader;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -31,19 +33,6 @@ import okhttp3.Response;
 
 public class NetworkUtils {
 
-    private static String API_KEY = BuildConfig.TMDB_API_KEY;
-    private static final String BASE_URL_PICTURES = "http://image.tmdb.org/t/p/";
-
-
-    public static boolean apiKeyAvailable() {
-        if (TextUtils.isEmpty(API_KEY)) {
-            return false;
-        }
-        return true;
-    }
-
-
-
     /**
      * to check if network connection is available
      *
@@ -62,78 +51,7 @@ public class NetworkUtils {
     }
 
 
-
-
-    public static String buildImagePath(@NonNull String imageName, TMDbImageSize imageSize) {
-        // fallback to a medium size if no size specified
-        if (imageSize==null) {
-            imageSize = TMDbImageSize.w342;
-        }
-        String url = BASE_URL_PICTURES + imageSize + "/" + imageName;
-        return url;
-    }
-
-
-    public static URL buildUrlForGenres(Language language) {
-        String urlStr = "https://api.themoviedb.org/3/genre/movie/list?api_key=" + API_KEY
-                + "&language=" + language.getLanguageCode();
-        try {
-            URL url = new URL(urlStr);
-            return url;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        // in case of errors
-        return null;
-    }
-
-    public static URL buildUrlForMenuItemSelected(int itemId, int page, Language language) {
-        if (itemId == R.id.nav_best_rated_movies) {
-            return buildUrlBestRatedMovies(page, language);
-        } else if (itemId == R.id.nav_most_popular_movies) {
-            return buildUrlMostPopularMovies(page, language);
-        }
-
-        // other cases
-        return null;
-    }
-
-    public static URL buildUrlBestRatedMovies(int page, Language language) {
-        String urlStr = "https://api.themoviedb.org/3/movie/top_rated?"
-                + "api_key="  + API_KEY
-                + "&language=" + language.getLanguageCode()
-                + "&page=" + page
-                ;
-        try {
-            URL url = new URL(urlStr);
-            return url;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        // in case of error
-        return null;
-    }
-
-    public static URL buildUrlMostPopularMovies(int page, Language language) {
-
-        String urlStr = "https://api.themoviedb.org/3/movie/popular?"
-                + "api_key=" + API_KEY
-                + "&language=" + language.getLanguageCode()
-                + "&page=" + page
-                ;
-        try {
-            URL url = new URL(urlStr);
-            return url;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        // in case of error
-        return null;
-    }
-
-
     public static String downloadJson(URL url) {
-
         OkHttpClient client = new OkHttpClient();
         try {
             MediaType mediaType = MediaType.parse("application/octet-stream");
@@ -156,5 +74,14 @@ public class NetworkUtils {
     }
 
 
-
+    public static URL buildUrl(String urlStr) {
+        try {
+            URL url = new URL(urlStr);
+            return url;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        // in case of errors
+        return null;
+    }
 }

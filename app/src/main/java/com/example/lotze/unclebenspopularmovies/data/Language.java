@@ -11,7 +11,7 @@ public enum Language {
     private String languageCode;
     private String languageUiName;
 
-    private Language(String languageCode, String languageUiName) {
+    Language(String languageCode, String languageUiName) {
         this.languageCode = languageCode;
         this.languageUiName = languageUiName;
     }

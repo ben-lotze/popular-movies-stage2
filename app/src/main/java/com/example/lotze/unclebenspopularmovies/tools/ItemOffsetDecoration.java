@@ -1,4 +1,4 @@
-package com.example.lotze.unclebenspopularmovies;
+package com.example.lotze.unclebenspopularmovies.tools;
 
 import android.content.Context;
 import android.graphics.Rect;

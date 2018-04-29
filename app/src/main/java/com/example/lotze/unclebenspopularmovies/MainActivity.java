@@ -1,5 +1,6 @@
 package com.example.lotze.unclebenspopularmovies;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -24,6 +25,9 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.lotze.unclebenspopularmovies.data.MovieListModel;
+import com.example.lotze.unclebenspopularmovies.tools.ItemOffsetDecoration;
+import com.example.lotze.unclebenspopularmovies.tools.UrlHelpers;
 import com.example.lotze.unclebenspopularmovies.dataHandlers.EndlessRecyclerViewScrollListener;
 import com.example.lotze.unclebenspopularmovies.data.Language;
 import com.example.lotze.unclebenspopularmovies.data.MovieTMDb;
@@ -35,7 +39,6 @@ import com.example.lotze.unclebenspopularmovies.tools.MovieTools;
 import com.example.lotze.unclebenspopularmovies.tools.NetworkUtils;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
@@ -44,16 +47,21 @@ public class MainActivity extends AppCompatActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener,
         NetworkStateReceiver.NetworkStateChangeListener {
 
+    private static final String TAG = "MainActivity";
+
     private static final int LOADER_ID_MOVIES = 0;
 
 
-    private int page = 1;   // page of current API call
-    private int lastMenuItemIdSelected = R.id.nav_most_popular_movies;    // default to most popular
+    //    private int page = 0;   // page of current API call
+    private int currentMenuItemId = R.id.nav_most_popular_movies;// default to most popular
     private boolean adapterSwapNecessary;
+
 
     private TextView tvNoConenction;
     private TextView tvNoApiKey;
     private ProgressBar loadingIndicator;
+
+    private MovieListModel movieListModel;
     private RecyclerView rvMovies;
     private MoviesAdapter moviesAdapter;
     private EndlessRecyclerViewScrollListener scrollListener;
@@ -62,30 +70,29 @@ public class MainActivity extends AppCompatActivity implements
      * language for genres and movie descriptions/titles (used in URL)
      */
     private Language language;
-
     private NetworkStateReceiver networkStateReceiver;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        DrawerLayout drawerNavigation = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, drawerNavigation, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerNavigation.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(lastMenuItemIdSelected);
+        navigationView.setCheckedItem(currentMenuItemId);
 
-        setActionBarTitle(lastMenuItemIdSelected);
-
-
+        setActionBarTitle(currentMenuItemId);
 
 
         // fetch language from settings
@@ -97,9 +104,8 @@ public class MainActivity extends AppCompatActivity implements
 
         // start showing only loading indicator
         loadingIndicator = findViewById(R.id.loading_indicator);
-        loadingIndicator.setVisibility(View.VISIBLE);
         rvMovies = findViewById(R.id.rv_movies_list);
-        rvMovies.setVisibility(View.INVISIBLE);
+        setUiStateLoading();
         tvNoConenction = findViewById(R.id.tv_no_connection);
         tvNoApiKey = findViewById(R.id.tv_no_api_key);
 
@@ -111,12 +117,11 @@ public class MainActivity extends AppCompatActivity implements
         registerReceiver(networkStateReceiver, intentFilter);
 
 
-
         moviesAdapter = new MoviesAdapter(this);
         rvMovies.setAdapter(moviesAdapter);
 
         // read number of columns (portrait/landscape) from respective values-file
-        int numberOfColumns = getResources().getInteger(R.integer.rv_column_number);
+        int numberOfColumns = getResources().getInteger(R.integer.rv_column_count);
         GridLayoutManager layoutManager = new GridLayoutManager(this,
                 numberOfColumns, GridLayoutManager.VERTICAL, false);
         rvMovies.setLayoutManager(layoutManager);
@@ -128,24 +133,39 @@ public class MainActivity extends AppCompatActivity implements
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Log.d(TAG, "onLoadMore() called");
                 getSupportLoaderManager().restartLoader(LOADER_ID_MOVIES, null, loaderListenerMovies);
             }
         };
         rvMovies.addOnScrollListener(scrollListener);
 
 
+        movieListModel = ViewModelProviders.of(this).get(MovieListModel.class);
+        Log.d(TAG, "onCreate() -> MovieListModel size=" + movieListModel.getMovies().size());
+        List<MovieTMDb> moviesFromModel = movieListModel.getMovies();
+        if (moviesFromModel != null && moviesFromModel.size() > 0) {
+            moviesAdapter.swapMovies(moviesFromModel);
+//            page = movieListModel.getPage();
+            Log.d(TAG, "onCreate() -> MovieListModel: swapped movies in adapter, page=" + movieListModel.getPage()
+                    + ", size=" + moviesFromModel.size());
+            setUiStateShowData();
+        }
 
-        if (NetworkUtils.internetConnectionAvailable(this)
-                && NetworkUtils.apiKeyAvailable()) {
+        // init loader only if there is no loader from previous activity -> no movies in the ViewModel
+        // was only if before trying with ViewModel
+        else if (NetworkUtils.internetConnectionAvailable(this)
+                && UrlHelpers.apiKeyAvailable()) {
             MovieTools.loadGenres(language, this);
+            Log.d("MainActivity", "Loader: onCreate() -> no movies in MovieModel -> initLoader()");
             getSupportLoaderManager().initLoader(LOADER_ID_MOVIES, null, loaderListenerMovies);
         }
-        // both cases can be true at the same time if the first case is false
+        // both cases can be true at the same time if there is no internet
         else {
-            if (!NetworkUtils.apiKeyAvailable()) {
+            if (!UrlHelpers.apiKeyAvailable()) {
                 tvNoApiKey.setVisibility(View.VISIBLE);
                 loadingIndicator.setVisibility(View.INVISIBLE);
             }
+            // TODO: this is always true ?
             if (!NetworkUtils.internetConnectionAvailable(this)) {
                 loadingIndicator.setVisibility(View.INVISIBLE);
                 tvNoConenction.setVisibility(View.VISIBLE);
@@ -155,10 +175,21 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    private void setUiStateLoading() {
+        rvMovies.setVisibility(View.INVISIBLE);
+        loadingIndicator.setVisibility(View.VISIBLE);
+    }
+
+    private void setUiStateShowData() {
+        tvNoConenction.setVisibility(View.INVISIBLE);
+        loadingIndicator.setVisibility(View.INVISIBLE);
+        rvMovies.setVisibility(View.VISIBLE);
+    }
+
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -170,13 +201,14 @@ public class MainActivity extends AppCompatActivity implements
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
         int itemId = item.getItemId();
-
         if (itemId == R.id.nav_best_rated_movies) {
             checkCategoryChangeAndReload(itemId);
         } else if (itemId == R.id.nav_most_popular_movies) {
             checkCategoryChangeAndReload(itemId);
+        } else if (itemId == R.id.nav_favorite_movies) {
+            Intent startFavMoviesActivity = new Intent(this, FavouriteMoviesActivity.class);
+            startActivity(startFavMoviesActivity);
         } else if (itemId == R.id.nav_settings) {
             Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
             startActivity(startSettingsActivity);
@@ -185,29 +217,30 @@ public class MainActivity extends AppCompatActivity implements
             startActivity(startAboutActivity);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
 
     /**
-     * checks if category has changed
-     * @param itemId of NavigationDrawer item
+     * checks if category has changed and reloads data only if change occurred
+     *
+     * @param itemIdSelected of NavigationDrawer item
      */
-    public void checkCategoryChangeAndReload(int itemId) {
+    public void checkCategoryChangeAndReload(int itemIdSelected) {
 
         // only reload if endpoint changed, do nothing if user clicks again on same menu point
-        if (itemId != lastMenuItemIdSelected) {
+        if (itemIdSelected != currentMenuItemId) {
             Log.d("MainActivity", "different menu item selected, reloading");
-            lastMenuItemIdSelected = itemId;    // to call loader with correct URL
-            page = 1;  // start over at page 1
+            currentMenuItemId = itemIdSelected;    // to call loader with correct URL
+
+            movieListModel.setPage(1);
             adapterSwapNecessary = true;
 
             // ui changes
-            setActionBarTitle(lastMenuItemIdSelected);
-            rvMovies.setVisibility(View.INVISIBLE);
-            loadingIndicator.setVisibility(View.VISIBLE);
+            setActionBarTitle(currentMenuItemId);
+            setUiStateLoading();
 
             if (NetworkUtils.internetConnectionAvailable(this)) {
                 getSupportLoaderManager().restartLoader(LOADER_ID_MOVIES, null, loaderListenerMovies);
@@ -225,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements
         Log.d("MainActivity", "movie clicked, starting detail activity");
 
         // get movie to show
-        MovieTMDb movie = moviesAdapter.getMovie(clickedItemIndex);
+        MovieTMDb movie = moviesAdapter.getMovieAtPosition(clickedItemIndex);
 
         Intent intent = new Intent(this, MovieDetailsActivity.class);
         intent.putExtra(MovieTMDb.PARCELABLE_KEY, movie);
@@ -233,11 +266,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    public void setActionBarTitle(int lastMenuItemIdSelected) {
-        if (lastMenuItemIdSelected == R.id.nav_best_rated_movies) {
+    public void setActionBarTitle(int itemId) {
+        if (itemId == R.id.nav_best_rated_movies) {
             getSupportActionBar().setTitle(getString(R.string.action_item_movies_best_rating));
-        } else if (lastMenuItemIdSelected == R.id.nav_most_popular_movies) {
+        } else if (itemId == R.id.nav_most_popular_movies) {
             getSupportActionBar().setTitle(getString(R.string.action_item_movies_most_popular));
+        } else if (itemId == R.id.nav_favorite_movies) {
+            getSupportActionBar().setTitle(getString(R.string.action_item_movies_favorites));
         }
     }
 
@@ -248,30 +283,30 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public Loader<List<MovieTMDb>> onCreateLoader(int id, Bundle args) {
 
-                    Log.d("MainActivity", "Loader: onCreateLoader() called");
-
                     return new AsyncTaskLoader<List<MovieTMDb>>(MainActivity.this) {
 
                         @Override
                         protected void onStartLoading() {
-                            Log.d("MainActivity", "AsyncTaskLoader: onStartLoading()");
                             forceLoad();
                         }
 
                         @Override
                         public List<MovieTMDb> loadInBackground() {
-                            URL url = NetworkUtils.buildUrlForMenuItemSelected(lastMenuItemIdSelected, page++, language);
-
-                            Log.d("MainActivity", "AsyncTaskLoader: loadInBackground() called: " + url.toString());
+                            movieListModel.incrementPage();
+                            URL url = UrlHelpers.getUrlForMenuItemSelected(currentMenuItemId,
+                                    movieListModel.getPage(), language);
+                            // TODO: test to save current page in ViewModel
+                            Log.d("MainActivity", "AsyncTaskLoader: loadInBackground() called: "
+                                    + url.toString());
                             String responseStr = NetworkUtils.downloadJson(url);
 
-                            List<MovieTMDb> movies = JsonUtils.parseJsonMoviesResult(responseStr, MainActivity.this);
+                            List<MovieTMDb> movies = JsonUtils.parseJsonMoviesResult(responseStr,
+                                    MainActivity.this);
                             return movies;
                         }
 
                         @Override
                         public void deliverResult(List<MovieTMDb> movies) {
-                            Log.d("MainActivity", "AsyncTaskLoader: deliverResult() called");
                             super.deliverResult(movies);
                         }
                     };
@@ -280,18 +315,43 @@ public class MainActivity extends AppCompatActivity implements
 
                 @Override
                 public void onLoadFinished(Loader<List<MovieTMDb>> loader, List<MovieTMDb> movies) {
+
+                    Log.d("MainActivity", "Loader: onLoadFinished() " +
+                            "-> received " + movies.size() + " movies" +
+                            ", adapter size=" + moviesAdapter.getItemCount() +
+                            ", movieModel size=" + movieListModel.getMovieCount());
+
                     if (adapterSwapNecessary) {
                         Log.d("MainActivity", "Loader: onLoadFinished() -> swapping");
+                        movieListModel.setMovies(movies);
                         moviesAdapter.swapMovies(movies);
                         scrollListener.resetState();
                         adapterSwapNecessary = false;
                     } else {
                         Log.d("MainActivity", "Loader: onLoadFinished() -> adding movies");
-                        moviesAdapter.addMovies(movies);
+
+                        // TODO: find out why this does not work after phone rotation
+                        /* After rotation this adds movies two times! Each page of 20 movies then adds
+                         * 40 movies to the RecyclerView. Before rotating the phone everything is fine
+                         * for any number of loaded pages.
+                         */
+//                        movieListModel.addMovies(movies);
+//                        moviesAdapter.addMovies(movies);
+
+                        // FIXED bug by using swap instead of adding (reason unclear),
+                        // log is surprisingly unhelpful
+                        List<MovieTMDb> previousMovies = moviesAdapter.getMovies();
+                        previousMovies.addAll(movies);
+                        movieListModel.setMovies(previousMovies);
+                        moviesAdapter.swapMovies(previousMovies);
                     }
-                    tvNoConenction.setVisibility(View.INVISIBLE);
-                    rvMovies.setVisibility(View.VISIBLE);
-                    loadingIndicator.setVisibility(View.INVISIBLE);
+
+                    Log.d(TAG, "onLoadFinished() " +
+                            "-> MovieListModel size=" + movieListModel.getMovieCount() +
+                            ", adapter size=" + moviesAdapter.getItemCount()
+                    );
+
+                    setUiStateShowData();
                 }
 
                 @Override
@@ -299,7 +359,6 @@ public class MainActivity extends AppCompatActivity implements
                     Log.d("MainActivity", "Loader: onLoaderReset() called");
                 }
             };
-
 
 
     @Override
@@ -310,17 +369,17 @@ public class MainActivity extends AppCompatActivity implements
             language = Helpers.loadLanguagePreference(this);
             Log.d("MainActivity", "changed language to " + language.getLanguageCode());
             // old movies must be removed, new load started
-            page = 1;
+            movieListModel.setPage(1);
             adapterSwapNecessary = true;
             getSupportLoaderManager().restartLoader(LOADER_ID_MOVIES, null, loaderListenerMovies);
         }
-
     }
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy() -> MovieListModel size=" + movieListModel.getMovies().size());
         // unregister MainActivity as an OnPreferenceChangedListener to avoid memory leaks
         PreferenceManager.getDefaultSharedPreferences(this)
                 .unregisterOnSharedPreferenceChangeListener(this);
@@ -334,11 +393,19 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop() -> MovieListModel size=" + movieListModel.getMovies().size());
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkStateReceiver, intentFilter);
+
+        Log.d(TAG, "onResume() -> MovieListModel size=" + movieListModel.getMovies().size());
     }
 
 
@@ -349,8 +416,6 @@ public class MainActivity extends AppCompatActivity implements
             getSupportLoaderManager().restartLoader(LOADER_ID_MOVIES, null, loaderListenerMovies);
         }
     }
-
-
 
 
 }

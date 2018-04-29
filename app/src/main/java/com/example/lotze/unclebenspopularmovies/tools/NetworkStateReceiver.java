@@ -27,7 +27,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
     private NetworkStateChangeListener listener;
     public interface NetworkStateChangeListener {
-        public void onNetworkStateChanged(boolean networkAvailable);
+        void onNetworkStateChanged(boolean networkAvailable);
     }
 
     /** to prevent Bug when entering other Activities and returning

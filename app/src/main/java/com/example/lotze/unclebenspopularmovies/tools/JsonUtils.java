@@ -7,8 +7,10 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.lotze.unclebenspopularmovies.R;
+import com.example.lotze.unclebenspopularmovies.data.MovieReview;
 import com.example.lotze.unclebenspopularmovies.data.MovieTMDb;
 import com.example.lotze.unclebenspopularmovies.data.TMDbContract;
+import com.example.lotze.unclebenspopularmovies.data.Trailer;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,6 +32,7 @@ import java.util.Map;
 public class JsonUtils {
 
 
+    private static final String TAG = JsonUtils.class.getSimpleName();
     /**
      * to comply with Udacity rules
      *
@@ -44,12 +47,12 @@ public class JsonUtils {
         String jsonEngineSetting = prefs.getString(context.getString(R.string.pref_json_parser_key),
                 jsonEngineByHandDefault);
 
+        // optional: parsing with gson
         if (jsonEngineGson.equals(jsonEngineSetting)) {
             return parseMoviesWithGoogleGson(jsonStr);
         }
         // default
         return parseMoviesWithBareHands(jsonStr);
-
     }
 
 
@@ -62,7 +65,7 @@ public class JsonUtils {
 
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
-            if (jsonObj==null) {
+            if (jsonObj == null) {
                 return new ArrayList<>();
             }
 
@@ -81,40 +84,21 @@ public class JsonUtils {
 
                 int id = jsonCurrentMovie.getInt(TMDbContract.FIELD_ID);
                 String title = jsonCurrentMovie.getString(TMDbContract.FIELD_TITLE);
-                String originalTitle = jsonCurrentMovie.getString(TMDbContract.FIELD_ORIGINAL_TITLE);
-                String overview = jsonCurrentMovie.getString(TMDbContract.FIELD_OVERVIEW);
-                String originalLanguage = jsonCurrentMovie.getString(TMDbContract.FIELD_ORIGINAL_LANGUAGE);
+                MovieTMDb movie = new MovieTMDb(id, title);
+
                 String releaseDate = jsonCurrentMovie.getString(TMDbContract.FIELD_RELEASE_DATE);
+                movie.setReleaseDate(releaseDate);
                 String posterPath = jsonCurrentMovie.getString(TMDbContract.FIELD_IMAGE_POSTER_PATH);
+                movie.setPosterPath(posterPath);
                 String backdropPath = jsonCurrentMovie.getString(TMDbContract.FIELD_IMAGE_BACKDROP_PATH);
-
-                // genre ids, default to empty list
-                List<Integer> genreIds = new ArrayList<>();
-                JSONArray jsonGenreIdsArray = jsonCurrentMovie.getJSONArray("genre_ids");
-                if (jsonGenreIdsArray != null) {
-                    int numberOfGenres = jsonGenreIdsArray.length();
-                    for (int i = 0; i < numberOfGenres; i++) {
-                        int genreId = (int) jsonGenreIdsArray.get(i);
-                        genreIds.add(genreId);
-                    }
-                }
-
-                int voteCount = jsonCurrentMovie.getInt(TMDbContract.FIELD_VOTE_COUNT);
+                movie.setBackdropPath(backdropPath);
                 float voteAvg = jsonCurrentMovie.getInt(TMDbContract.FIELD_VOTE_AVERAGE);
-                float popularity = jsonCurrentMovie.getInt(TMDbContract.FIELD_POPULARITY);
+                movie.setVoteAverage(voteAvg);
 
-                boolean isAdult = jsonCurrentMovie.getBoolean(TMDbContract.FIELD_ADULT);
-                boolean hasVideo = jsonCurrentMovie.getBoolean(TMDbContract.FIELD_ADULT);
-
-                MovieTMDb movie = new MovieTMDb(id, title, originalTitle,
-                        voteCount, voteAvg, popularity,
-                        overview, genreIds, originalLanguage, releaseDate, isAdult, hasVideo,
-                        posterPath, backdropPath
-                );
                 movies.add(movie);
             }
 
-            // no errors: return all movies
+            // if no exceptions: return all movies
             return movies;
 
         } catch (JSONException e) {
@@ -125,8 +109,76 @@ public class JsonUtils {
         return null;
     }
 
+
+    public static void parseAdditionalMovieInfo(MovieTMDb movie, String jsonStr) {
+
+        try {
+            JSONObject jsonObj = new JSONObject(jsonStr);
+
+            JSONArray jsonGenreArray = jsonObj.getJSONArray("genres");
+            if (jsonGenreArray != null) {
+                List<String> genres = new ArrayList<>();
+                int numberOfGenres = jsonGenreArray.length();
+                for (int i = 0; i < numberOfGenres; i++) {
+                    JSONObject jsonCurrentGenre = jsonGenreArray.getJSONObject(i);
+                    String genreName = jsonCurrentGenre.getString("name");
+                    genres.add(genreName);
+                }
+                movie.setGenreNames(genres);
+                Log.d(TAG,"parsed genre names: " + genres);
+            }
+
+
+            String originalTitle = jsonObj.getString(TMDbContract.FIELD_ORIGINAL_TITLE);
+            movie.setOriginalTitle(originalTitle);
+            String overview = jsonObj.getString(TMDbContract.FIELD_OVERVIEW);
+            movie.setOverview(overview);
+            String originalLanguage = jsonObj.getString(TMDbContract.FIELD_ORIGINAL_LANGUAGE);
+            movie.setOriginalLanguage(originalLanguage);
+
+            boolean isAdult = jsonObj.getBoolean(TMDbContract.FIELD_ADULT);
+            movie.setAdult(isAdult);
+            boolean hasVideo = jsonObj.getBoolean(TMDbContract.FIELD_VIDEO);
+            movie.setVideo(hasVideo);
+
+            int voteCount = jsonObj.getInt(TMDbContract.FIELD_VOTE_COUNT);
+            movie.setVoteCount(voteCount);
+            float popularity = jsonObj.getInt(TMDbContract.FIELD_POPULARITY);
+            movie.setPopularity(popularity);
+
+            String imdbId = jsonObj.getString("imdb_id");
+            movie.setImdbId(imdbId);
+            int runtime = jsonObj.getInt("runtime");
+            movie.setRuntime(runtime);
+            int budget= jsonObj.getInt("budget");
+            movie.setBudget(budget);
+
+            // again to be sure
+            float voteAvg = jsonObj.getInt(TMDbContract.FIELD_VOTE_AVERAGE);
+            movie.setVoteAverage(voteAvg);
+            String releaseDate = jsonObj.getString(TMDbContract.FIELD_RELEASE_DATE);
+            Log.d(TAG, "json release date = " + releaseDate);
+            movie.setReleaseDate(releaseDate);
+
+            // TODO: why needs this to be loaded again? should come from DB when in favorites
+            // idea: db saves complete path?
+//            String posterPath = jsonObj.getString(TMDbContract.FIELD_IMAGE_POSTER_PATH);
+//            movie.setPosterPath(posterPath);
+//            String backdropPath = jsonObj.getString(TMDbContract.FIELD_IMAGE_BACKDROP_PATH);
+//            movie.setBackdropPath(backdropPath);
+
+//            Log.d(TAG, "added information: imdbId="+imdbId + ", runtime="+runtime
+//                + ", genres: "+movie.getGenreNames());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
     public static List<MovieTMDb> parseMoviesWithGoogleGson(String jsonStr) {
-        Log.d("JsonUtils", "parsing movies with Gson");
+//        Log.d("JsonUtils", "parsing movies with Gson");
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
             // objects are in Json-array (json stuff before array not interesting)
@@ -138,12 +190,9 @@ public class JsonUtils {
                     // parses underscore names into camelCase Java variables
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                     .create();
-            List<MovieTMDb> movies = gson.fromJson(jsonMoviesStr, new TypeToken<List<MovieTMDb>>() {
-            }.getType());
-            Log.d("JsonUtils", "parsed movies:");
-            for (MovieTMDb movie : movies) {
-                Log.d("JsonUtils", "---> movie:" + movie.toString());
-            }
+            List<MovieTMDb> movies = gson.fromJson(jsonMoviesStr,
+                    new TypeToken<List<MovieTMDb>>() {
+                    }.getType());
             return movies;
 
         } catch (JSONException e) {
@@ -152,6 +201,84 @@ public class JsonUtils {
 
         // in case of error
         return null;
+    }
+
+
+    public static List<MovieReview> parseMovieReviews(String jsonStr) {
+
+        try {
+            JSONObject jsonObj = new JSONObject(jsonStr);
+            JSONArray jsonTrailerArray = jsonObj.getJSONArray("results");
+            if (jsonTrailerArray == null) {
+                return new ArrayList<>();
+            }
+
+            // Gson can not parse the array directly -> make string from array
+            String jsonReviewsStr = jsonTrailerArray.toString();
+
+            Gson gson = new GsonBuilder()
+                    // parses underscore names into camelCase Java variables
+                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                    .create();
+
+            List<MovieReview> reviews = gson.fromJson(jsonReviewsStr,
+                    new TypeToken<List<MovieReview>>() {
+                    }.getType());
+            return reviews;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        // in case of errors
+        return null;
+    }
+
+    public static List<Trailer> parseRelatedMovieTrailers(String jsonStr) {
+        try {
+            JSONObject jsonObj = new JSONObject(jsonStr);
+            JSONArray jsonTrailerArray = jsonObj.getJSONArray("results");
+            if (jsonTrailerArray == null) {
+                return new ArrayList<>();
+            }
+            // Gson can not parse the array directly -> make string from array
+            String jsonMoviesStr = jsonTrailerArray.toString();
+
+            Gson gson = new GsonBuilder()
+                    // parses underscore names into camelCase Java variables
+                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                    .create();
+
+            List<Trailer> trailers = gson.fromJson(jsonMoviesStr,
+                    new TypeToken<List<Trailer>>() {
+                    }.getType());
+//            for (Trailer trailer : trailers) {
+//                Log.d("JsonUtils", "---> trailer:" + trailer.toString());
+//            }
+            return trailers;
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        // in case of errors
+        return null;
+    }
+
+
+    public static void parseYoutubeTrailerDetailsIntoTrailer(String jsonStr, Trailer trailer) {
+        try {
+            JSONObject jsonObj = new JSONObject(jsonStr);
+            String authorName = jsonObj.getString("author_name");
+            trailer.setAuthorName(authorName);
+            String authorUrl = jsonObj.getString("author_url");
+            trailer.setAuthorUrl(authorUrl);
+            String thumbnailUrl = jsonObj.getString("thumbnail_url");
+            trailer.setThumbnailUrl(thumbnailUrl);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+//        return trailer;
+
     }
 
 

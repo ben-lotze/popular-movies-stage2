@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_search_imdb"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="@string/search_label_imdb" />
+
+    <item
+        android:id="@+id/action_search_youtube"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="@string/search_label_youtube" />
+
+    <item
+        android:id="@+id/action_search_rotton_tomatoes"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="@string/search_label_rotton_tomatoes" />
+
+    <item
+        android:id="@+id/action_search_google"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="@string/search_label_google" />
+
+    <item
+        android:id="@+id/action_search_amazon"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="@string/search_label_amazon" />
+
+
+</menu>

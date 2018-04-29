@@ -37,6 +37,7 @@ android:layout_marginHorizontal="8dp"
                 android:layout_height="@dimen/rv_image_height"
                 android:scaleType="fitXY"
                 android:adjustViewBounds="true"
+
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -55,12 +56,24 @@ android:layout_marginHorizontal="8dp"
                 android:maxLines="2"
                 android:textSize="16sp"
                 android:textStyle="bold"
-
                 app:layout_constraintLeft_toLeftOf="@id/iv_rv_item_movie_poster"
                 app:layout_constraintStart_toStartOf="@id/iv_rv_item_movie_poster"
                 app:layout_constraintTop_toBottomOf="@id/iv_rv_item_movie_poster"
                 tools:text="Movie title" />
 
+
+            <TextView
+                android:id="@+id/tv_rv_item_movie_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:autoSizeTextType="uniform"
+                android:textColor="@color/colorRvRating"
+                tools:text="1833"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_rv_item_movie_title"
+                />
 
             <ImageView
                 android:id="@+id/iv_rv_item_rating_star"
@@ -69,36 +82,23 @@ android:layout_marginHorizontal="8dp"
                 android:scaleType="fitXY"
                 app:layout_constraintLeft_toLeftOf="@id/tv_rv_item_movie_title"
                 app:layout_constraintStart_toStartOf="@id/tv_rv_item_movie_title"
-                app:layout_constraintTop_toBottomOf="@id/tv_rv_item_movie_title"
+                app:layout_constraintTop_toBottomOf="@id/tv_rv_item_movie_year"
+                app:layout_constraintBottom_toTopOf="@id/tv_rv_item_movie_year"
                 app:srcCompat="@drawable/ic_star_accent_color_24dp" />
 
             <TextView
                 android:id="@+id/tv_rv_item_movie_rating"
                 android:layout_width="wrap_content"
-                android:layout_height="16sp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:autoSizeTextType="uniform"
                 android:textColor="@color/colorRvRating"
                 android:textSize="16sp"
-                android:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="@id/tv_rv_item_movie_year"
                 app:layout_constraintLeft_toRightOf="@id/iv_rv_item_rating_star"
-                app:layout_constraintStart_toEndOf="@id/iv_rv_item_rating_star"
-                app:layout_constraintTop_toTopOf="@id/iv_rv_item_rating_star"
-
-                tools:text="7.8"
-
-                />
-
-            <TextView
-                android:id="@+id/tv_rv_item_movie_year"
-                android:layout_width="wrap_content"
-                android:layout_height="16sp"
-                android:textSize="16sp"
-                android:autoSizeTextType="uniform"
-                android:textColor="@color/colorRvRating"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/iv_rv_item_rating_star"
-                />
+                app:layout_constraintStart_toEndOf="@+id/iv_rv_item_rating_star"
+                tools:text="7.8" />
 
         </android.support.constraint.ConstraintLayout>
 

@@ -11,6 +11,7 @@
 
     <string name="action_item_movies_best_rating">Best rating</string>
     <string name="action_item_movies_most_popular">Most popular</string>
+    <string name="action_item_movies_favorites">Favorites</string>
 
     <string name="original_title">Original title:</string>
     <string name="description_not_available">No description available.</string>
@@ -35,8 +36,30 @@
 
 
     <string name="about_app">This app was created as part of the <b>Google Developer Nanodegree Scholarship 2018</b> from Udacity after taking part in the Google Developer Challenge Scholarship 2017.</string>
-    <string name="about_tmdb">UBPMDb (Uncle Ben\s Movie Database) uses <b>TMDb (The Movie Database)</b> - a community built multilingual movie database for movie details, fanart and posters - to practice and demonstrate some key elements of Android development like RecyclerView, Adapters, LoaderManager, Settings, Json parsing, CardViews and ConstraintLayout.</string>
+    <string name="about_tmdb">UBPMDb (Uncle Ben\s Movie Database) uses <b>TMDb (The Movie Database)</b>
+        - a community built multilingual movie database for movie details, fanart and posters - to practice
+        and demonstrate some key elements of Android development like RecyclerView, Adapters, LoaderManager,
+        ContentProviders, Settings, Json parsing, CardViews and ConstraintLayout.</string>
     <string name="no_connection_available">No connection available</string>
     <string name="no_api_key_available">Please insert your TMDb API key in gradle.properties
     </string>
+    <string name="action_sort_by_title">Sort by title</string>
+    <string name="action_sort_by_release_date">Sort by release date</string>
+    <string name="action_sort_by_time_added">Sort by time added</string>
+    <string name="action_add_favorite">Add Favorite</string>
+    <string name="action_remove_favourite">Remove Favourite</string>
+    <string name="more">More</string>
+    <string name="rating_of_ten">/10</string>
+    <string name="search_on">Search on...</string>
+    <string name="label_plot">Plot</string>
+    <string name="label_trailers">Trailers</string>
+    <string name="no_trailers_found_message">No trailers found in TMDb :-(  Use search above.</string>
+    <string name="label_reviews">Reviews</string>
+    <string name="no_reviews_found_message">No reviews found in TMDb.</string>
+    <string name="search_label_imdb">IMDb</string>
+    <string name="search_label_youtube">Youtube</string>
+    <string name="search_label_rotton_tomatoes">Rotton Tomatoes</string>
+    <string name="search_label_google">Google</string>
+    <string name="search_label_amazon">Amazon</string>
+
 </resources>

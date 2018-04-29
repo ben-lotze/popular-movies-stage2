@@ -24,6 +24,8 @@ import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
 
+    private static final String TAG = MoviesAdapter.class.getSimpleName();
+
     private List<MovieTMDb> movies;
     private Context context;
 
@@ -52,12 +54,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             this.tvMovieTitle = itemView.findViewById(R.id.tv_rv_item_movie_title);
             this.tvMovieRating = itemView.findViewById(R.id.tv_rv_item_movie_rating);
             this.tvMovieReleaseYear = itemView.findViewById(R.id.tv_rv_item_movie_year);
-
             itemView.setOnClickListener(this);
         }
 
         public void bind(int position) {
-            MovieTMDb movie = getMovie(position);
+            MovieTMDb movie = getMovieAtPosition(position);
 
             String posterUrl = movie.getPosterPath(TMDbImageSize.w342);
             Glide.with(context).load(posterUrl).into(ivMovePoster);
@@ -68,7 +69,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             float voteAvg = movie.getVoteAverage();
             tvMovieRating.setText(String.format("%.1f", voteAvg));
 
-            // TODO: more stable/reliable parsing of release year for stage 2
+            // TODO: (long term) more reliable parsing of release year
             String releaseYear = movie.getReleaseDate().split("-")[0];
             tvMovieReleaseYear.setText(releaseYear);
         }
@@ -83,7 +84,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         context = parent.getContext();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL, false);
@@ -107,28 +107,38 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         return movies.size();
     }
 
-    // TODO: better implementation of swapMovies()
+    /**
+     * complete exchange of adapter's movies
+     * @param movies
+     */
     public void swapMovies(List<MovieTMDb> movies) {
         this.movies = movies;
         notifyDataSetChanged();
-        Log.d("MoviesAdapter", "populated with movies: " + getItemCount());
+        Log.d("MoviesAdapter", "swapped " + getItemCount() + " movies");
     }
 
+    /**
+     *
+     * @param movies added at the end of the adapter's movie list
+     */
     public void addMovies(List<MovieTMDb> movies) {
-
         if (this.movies == null) {
             this.movies = new ArrayList<>();
         }
-        // just add at end of list (movies from each Json response page are ordered as defined in request)
         this.movies.addAll(movies);
+        Log.d("MoviesAdapter", "added " + movies.size() + " movies to adapter (size=" + getItemCount() + ")");
         notifyDataSetChanged();
+//        notifyItemRangeChanged();
     }
 
     public List<MovieTMDb> getMovies() {
+        if (movies==null) {
+            return new ArrayList<>();
+        }
         return movies;
     }
 
-    public MovieTMDb getMovie(int position) {
+    public MovieTMDb getMovieAtPosition(int position) {
         if (movies == null) {
             return null;
         }
