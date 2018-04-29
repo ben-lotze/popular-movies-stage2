@@ -17,10 +17,20 @@ Please add your API key in gradle.properties: TmdbApiKey="your_api_key"
 
 ## Screenshots
 <img src="/screenshots/nav_drawer.png" width="360">
-<img src="/screenshots/movies_list.png" width="360">
-<img src="/screenshots/movie_details_1.png" width="360">
-<img src="/screenshots/trailers.png" width="360">
-<img src="/screenshots/search_on.png" width="360">
-<img src="/screenshots/favorites_sorting.png" width="360">
+Navigation Drawer
 
+<img src="/screenshots/movies_list.png" width="360">
+Movie list
+
+<img src="/screenshots/movie_details_1.png" width="360">
+Movie details 1
+
+<img src="/screenshots/trailers.png" width="360">
+Movie details 2 (trailers)
+
+<img src="/screenshots/search_on.png" width="360">
+Movie details 3 (search functionality)
+
+<img src="/screenshots/favorites_sorting.png" width="360">
+Favourites with sorting functionality
 
