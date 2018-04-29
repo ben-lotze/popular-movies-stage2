@@ -16,4 +16,9 @@ Please add your API key in gradle.properties: TmdbApiKey="your_api_key"
 
 
 ## Screenshots
-
+![Navigation Drawer](/screenshots/nav_drawer.png)
+![Movie List](/screenshots/movies_list.png)
+![Movie Details 1](/screenshots/movie_details_1.png)
+![Movie Details 2 (Trailers)](/screenshots/trailers.png)
+![Movie Details 2 (Trailers and search functionality)](/screenshots/search_on.png)
+![Favourites](/screenshots/favorites_sorting.png)
