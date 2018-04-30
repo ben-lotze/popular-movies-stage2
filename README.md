@@ -47,8 +47,8 @@ Please add your TMDb API key in gradle.properties: TmdbApiKey="your_api_key"
 ##### Movie details with trailer previews and search:
 <img src="/screenshots/movie_details.jpg" width="250"> <img src="/screenshots/movie_details_trailers_and_search.jpg" width="250"> <img src="/screenshots/movie_details_less_trailers.jpg" width="250"> <img src="/screenshots/movie_details_less_trailers_no_reviews.jpg" width="250">
 
-##### Favorites with sorting functionality:
-<img src="/screenshots/favorites_sorting.jpg" width="250">
+##### Favorites with sorting and swipe-to-delete functionality:
+<img src="/screenshots/favorites_sorting.jpg" width="250"> <img src="/screenshots/favorites_swipe_to_delete.gif" width="250">
 
 ##### Settings
 <img src="/screenshots/settings.jpg" width="250">
