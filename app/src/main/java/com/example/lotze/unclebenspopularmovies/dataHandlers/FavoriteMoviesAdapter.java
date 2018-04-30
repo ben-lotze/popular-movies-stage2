@@ -2,8 +2,6 @@ package com.example.lotze.unclebenspopularmovies.dataHandlers;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.annotation.Nullable;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,23 +13,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.lotze.unclebenspopularmovies.R;
-import com.example.lotze.unclebenspopularmovies.data.Language;
 import com.example.lotze.unclebenspopularmovies.data.MovieTMDb;
 import com.example.lotze.unclebenspopularmovies.data.TMDbImageSize;
-import com.example.lotze.unclebenspopularmovies.db.FavouriteMovieContract;
-import com.example.lotze.unclebenspopularmovies.tools.Helpers;
-import com.example.lotze.unclebenspopularmovies.tools.JsonUtils;
-import com.example.lotze.unclebenspopularmovies.tools.NetworkUtils;
-import com.example.lotze.unclebenspopularmovies.tools.UrlHelpers;
-
-import java.net.URL;
-import java.sql.Timestamp;
+import com.example.lotze.unclebenspopularmovies.db.FavoriteMovieContract;
 
 /**
  * Created by Benjamin Lotze on 17.02.2018.
  */
 
-public class FavouriteMoviesAdapter extends RecyclerView.Adapter<FavouriteMoviesAdapter.MovieViewHolder> {
+public class FavoriteMoviesAdapter extends RecyclerView.Adapter<FavoriteMoviesAdapter.MovieViewHolder> {
 
     private static final String TAG = "FavMoviesAdapter";
 
@@ -44,7 +34,7 @@ public class FavouriteMoviesAdapter extends RecyclerView.Adapter<FavouriteMovies
         void onMoviesListItemClick(int clickedItemIndex);
     }
 
-    public FavouriteMoviesAdapter(ListItemClickListener onClickListener) {
+    public FavoriteMoviesAdapter(ListItemClickListener onClickListener) {
         this.onClickListener = onClickListener;
     }
 
@@ -88,7 +78,7 @@ public class FavouriteMoviesAdapter extends RecyclerView.Adapter<FavouriteMovies
 
             // set favId as tag in holder (for swipe-to-remove)
             cursor.moveToPosition(position);
-            int favIdIndex = cursor.getColumnIndex(FavouriteMovieContract.FavMovieEntry._ID);
+            int favIdIndex = cursor.getColumnIndex(FavoriteMovieContract.FavMovieEntry._ID);
             final int favId = cursor.getInt(favIdIndex);
             this.itemView.setTag(R.id.id_movie_fav_id, favId);
         }
@@ -138,25 +128,25 @@ public class FavouriteMoviesAdapter extends RecyclerView.Adapter<FavouriteMovies
         cursor.moveToPosition(index);
 
         int movieId = cursor.getInt(
-                cursor.getColumnIndex(FavouriteMovieContract.FavMovieEntry.COLUMN_MOVIE_ID));
+                cursor.getColumnIndex(FavoriteMovieContract.FavMovieEntry.COLUMN_MOVIE_ID));
         String title = cursor.getString(
-                cursor.getColumnIndex(FavouriteMovieContract.FavMovieEntry.COLUMN_TITLE));
+                cursor.getColumnIndex(FavoriteMovieContract.FavMovieEntry.COLUMN_TITLE));
         final MovieTMDb movie = new MovieTMDb(movieId, title);
 
         String posterUrl = cursor.getString(
-                cursor.getColumnIndex(FavouriteMovieContract.FavMovieEntry.COLUMN_POSTER_PATH));
+                cursor.getColumnIndex(FavoriteMovieContract.FavMovieEntry.COLUMN_POSTER_PATH));
         movie.setPosterPath(posterUrl);
 
         String backdropUrl = cursor.getString(
-                cursor.getColumnIndex(FavouriteMovieContract.FavMovieEntry.COLUMN_BACKDROP_PATH));
+                cursor.getColumnIndex(FavoriteMovieContract.FavMovieEntry.COLUMN_BACKDROP_PATH));
         movie.setBackdropPath(backdropUrl);
 
         String releaseDateStr = cursor.getString(
-                cursor.getColumnIndex(FavouriteMovieContract.FavMovieEntry.COLUMN_DATE_RELEASED));
+                cursor.getColumnIndex(FavoriteMovieContract.FavMovieEntry.COLUMN_DATE_RELEASED));
         movie.setReleaseDate(releaseDateStr);
 
         long timestampAddedFav = cursor.getLong(
-                cursor.getColumnIndex(FavouriteMovieContract.FavMovieEntry.COLUMN_TIMESTAMP_SAVED));
+                cursor.getColumnIndex(FavoriteMovieContract.FavMovieEntry.COLUMN_TIMESTAMP_SAVED));
 //        movie.setTimestampAddedAsFav(timestampAddedFav);
 
         Log.d(TAG, "getMovieAtPosition(), " +

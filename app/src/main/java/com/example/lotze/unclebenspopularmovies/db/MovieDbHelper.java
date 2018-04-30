@@ -23,22 +23,22 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String CREATE_TABLE = "CREATE TABLE " + FavouriteMovieContract.FavMovieEntry.TABLE_NAME + " ("
-                + FavouriteMovieContract.FavMovieEntry._ID + " INTEGER PRIMARY KEY, "
-                + FavouriteMovieContract.FavMovieEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, "
-                + FavouriteMovieContract.FavMovieEntry.COLUMN_TITLE + " TEXT NOT NULL, "
-                + FavouriteMovieContract.FavMovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, "
-                + FavouriteMovieContract.FavMovieEntry.COLUMN_BACKDROP_PATH + " TEXT NOT NULL, "
-                + FavouriteMovieContract.FavMovieEntry.COLUMN_TIMESTAMP_SAVED + " TIMESTAMP NOT NULL, "
-//                + FavouriteMovieContract.FavMovieEntry.COLUMN_TIMESTAMP_SAVED + " DATE DEFAULT (datetime('now','localtime')), "
-                + FavouriteMovieContract.FavMovieEntry.COLUMN_DATE_RELEASED + " TEXT NOT NULL"    // as parsed from TMDb
+        final String CREATE_TABLE = "CREATE TABLE " + FavoriteMovieContract.FavMovieEntry.TABLE_NAME + " ("
+                + FavoriteMovieContract.FavMovieEntry._ID + " INTEGER PRIMARY KEY, "
+                + FavoriteMovieContract.FavMovieEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, "
+                + FavoriteMovieContract.FavMovieEntry.COLUMN_TITLE + " TEXT NOT NULL, "
+                + FavoriteMovieContract.FavMovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, "
+                + FavoriteMovieContract.FavMovieEntry.COLUMN_BACKDROP_PATH + " TEXT NOT NULL, "
+                + FavoriteMovieContract.FavMovieEntry.COLUMN_TIMESTAMP_SAVED + " TIMESTAMP NOT NULL, "
+//                + FavoriteMovieContract.FavMovieEntry.COLUMN_TIMESTAMP_SAVED + " DATE DEFAULT (datetime('now','localtime')), "
+                + FavoriteMovieContract.FavMovieEntry.COLUMN_DATE_RELEASED + " TEXT NOT NULL"    // as parsed from TMDb
                 + ");";
         db.execSQL(CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + FavouriteMovieContract.FavMovieEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + FavoriteMovieContract.FavMovieEntry.TABLE_NAME);
         onCreate(db);
     }
 }

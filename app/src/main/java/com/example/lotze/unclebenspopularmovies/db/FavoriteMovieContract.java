@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
  * Created by Benjamin Lotze on 14.04.2018.
  */
 
-public class FavouriteMovieContract {
+public class FavoriteMovieContract {
 
     // to know which ContentProvider to access
     public static final String AUTHORITY = "com.example.lotze.unclebenspopularmovies";

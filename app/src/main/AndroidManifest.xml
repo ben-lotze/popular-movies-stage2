@@ -33,7 +33,7 @@
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".FavouriteMoviesActivity"
+            android:name=".FavoriteMoviesActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -55,7 +55,7 @@
         </activity>
 
         <provider
-            android:name=".db.FavouriteMovieContentProvider"
+            android:name=".db.FavoriteMovieContentProvider"
             android:authorities="com.example.lotze.unclebenspopularmovies"
             android:exported="false" />
 

@@ -47,7 +47,7 @@
     <string name="action_sort_by_release_date">Sort by release date</string>
     <string name="action_sort_by_time_added">Sort by time added</string>
     <string name="action_add_favorite">Add Favorite</string>
-    <string name="action_remove_favourite">Remove Favourite</string>
+    <string name="action_remove_favorite">Remove Favorite</string>
     <string name="more">More</string>
     <string name="rating_of_ten">/10</string>
     <string name="search_on">Search on...</string>
@@ -61,5 +61,7 @@
     <string name="search_label_rotton_tomatoes">Rotton Tomatoes</string>
     <string name="search_label_google">Google</string>
     <string name="search_label_amazon">Amazon</string>
+    <string name="billions">Billions</string>
+    <string name="millions">Millions</string>
 
 </resources>

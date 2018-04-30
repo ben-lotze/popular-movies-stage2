@@ -16,7 +16,7 @@ import android.util.Log;
  * Created by Benjamin Lotze on 14.04.2018.
  */
 
-public class FavouriteMovieContentProvider extends ContentProvider {
+public class FavoriteMovieContentProvider extends ContentProvider {
 
     public static final int FAV_MOVIES = 100;
     public static final int FAV_MOVIE_WITH_ID = 101;
@@ -34,9 +34,9 @@ public class FavouriteMovieContentProvider extends ContentProvider {
           For each kind of uri you may want to access, add the corresponding match with addURI.
           The two calls below add matches for the task directory and a single item by ID.
          */
-        uriMatcher.addURI(FavouriteMovieContract.AUTHORITY, FavouriteMovieContract.PATH_FAVORITE_MOVIES, FAV_MOVIES);
-        uriMatcher.addURI(FavouriteMovieContract.AUTHORITY,
-                FavouriteMovieContract.PATH_FAVORITE_MOVIES + "/#", FAV_MOVIE_WITH_ID);
+        uriMatcher.addURI(FavoriteMovieContract.AUTHORITY, FavoriteMovieContract.PATH_FAVORITE_MOVIES, FAV_MOVIES);
+        uriMatcher.addURI(FavoriteMovieContract.AUTHORITY,
+                FavoriteMovieContract.PATH_FAVORITE_MOVIES + "/#", FAV_MOVIE_WITH_ID);
 
         return uriMatcher;
     }
@@ -59,7 +59,7 @@ public class FavouriteMovieContentProvider extends ContentProvider {
         Cursor retCursor;
         switch (matchId) {
             case FAV_MOVIES:
-                retCursor = db.query(FavouriteMovieContract.FavMovieEntry.TABLE_NAME,
+                retCursor = db.query(FavoriteMovieContract.FavMovieEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -86,9 +86,9 @@ public class FavouriteMovieContentProvider extends ContentProvider {
         int matchId = sUriMatcher.match(uri);
         switch (matchId) {
             case FAV_MOVIES:
-                long id = db.insert(FavouriteMovieContract.FavMovieEntry.TABLE_NAME, null, values);
+                long id = db.insert(FavoriteMovieContract.FavMovieEntry.TABLE_NAME, null, values);
                 if (id > 0) {
-                    returnUri = ContentUris.withAppendedId(FavouriteMovieContract.FavMovieEntry.CONTENT_URI, id);
+                    returnUri = ContentUris.withAppendedId(FavoriteMovieContract.FavMovieEntry.CONTENT_URI, id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
@@ -117,8 +117,8 @@ public class FavouriteMovieContentProvider extends ContentProvider {
                 String id = uri.getPathSegments().get(1);
                 // Use selections/selectionArgs to filter for this ID
                 if (id != null) {
-                    tasksDeleted = db.delete(FavouriteMovieContract.FavMovieEntry.TABLE_NAME,
-                            FavouriteMovieContract.FavMovieEntry._ID + "=?", new String[]{id});
+                    tasksDeleted = db.delete(FavoriteMovieContract.FavMovieEntry.TABLE_NAME,
+                            FavoriteMovieContract.FavMovieEntry._ID + "=?", new String[]{id});
                 }
                 break;
             default:

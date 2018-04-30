@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements
         } else if (itemId == R.id.nav_most_popular_movies) {
             checkCategoryChangeAndReload(itemId);
         } else if (itemId == R.id.nav_favorite_movies) {
-            Intent startFavMoviesActivity = new Intent(this, FavouriteMoviesActivity.class);
+            Intent startFavMoviesActivity = new Intent(this, FavoriteMoviesActivity.class);
             startActivity(startFavMoviesActivity);
         } else if (itemId == R.id.nav_settings) {
             Intent startSettingsActivity = new Intent(this, SettingsActivity.class);

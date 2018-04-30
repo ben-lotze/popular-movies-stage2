@@ -124,9 +124,9 @@ public class MovieTools {
             @Override
             protected Boolean doInBackground(Void... voids) {
                 Log.d("MovieTools", "isFavoriteMovie() -> doInBackground() called");
-                Cursor cursor = context.getContentResolver().query(FavouriteMovieContract.FavMovieEntry.CONTENT_URI,
+                Cursor cursor = context.getContentResolver().query(FavoriteMovieContract.FavMovieEntry.CONTENT_URI,
                         null,
-                        FavouriteMovieContract.FavMovieEntry.COLUMN_MOVIE_ID + "=" + movieId, null,
+                        FavoriteMovieContract.FavMovieEntry.COLUMN_MOVIE_ID + "=" + movieId, null,
                         null);
                 // TODO: check after having added favs that this is no longer null
                 if (cursor==null) {

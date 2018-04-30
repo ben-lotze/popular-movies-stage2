@@ -15,21 +15,20 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.example.lotze.unclebenspopularmovies.data.MovieTMDb;
-import com.example.lotze.unclebenspopularmovies.dataHandlers.FavouriteMoviesAdapter;
-import com.example.lotze.unclebenspopularmovies.db.FavouriteMovieContract;
+import com.example.lotze.unclebenspopularmovies.dataHandlers.FavoriteMoviesAdapter;
+import com.example.lotze.unclebenspopularmovies.db.FavoriteMovieContract;
 
-public class FavouriteMoviesActivity extends AppCompatActivity
+public class FavoriteMoviesActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,
-        FavouriteMoviesAdapter.ListItemClickListener {
+        FavoriteMoviesAdapter.ListItemClickListener {
 
-    private static final String TAG = "FavouriteMoviesActivity";
+    private static final String TAG = "FavoriteMoviesActivity";
     private static final int FAV_MOVIES_LOADER_ID = 0;
-    private FavouriteMoviesAdapter adapter;
+    private FavoriteMoviesAdapter adapter;
 
-    private String ORDER_BY_COLUMN = FavouriteMovieContract.FavMovieEntry.COLUMN_TITLE;
+    private String ORDER_BY_COLUMN = FavoriteMovieContract.FavMovieEntry.COLUMN_TITLE;
     private String ORDER_ASC_DESC = "ASC";
 
 
@@ -45,7 +44,7 @@ public class FavouriteMoviesActivity extends AppCompatActivity
         }
 
         RecyclerView rvFavoriteMovies = findViewById(R.id.rv_favorite_movies);
-        adapter = new FavouriteMoviesAdapter(this);
+        adapter = new FavoriteMoviesAdapter(this);
         rvFavoriteMovies.setAdapter(adapter);
         int numberOfColumns = getResources().getInteger(R.integer.rv_column_count);
         GridLayoutManager layoutManager = new GridLayoutManager(this, numberOfColumns);
@@ -69,12 +68,12 @@ public class FavouriteMoviesActivity extends AppCompatActivity
                 int id = (int) viewHolder.itemView.getTag(R.id.id_movie_fav_id);
                 Log.d(TAG, "starting to delete favorite movie with fav id=" + id);
 
-                Uri uri = FavouriteMovieContract.FavMovieEntry.CONTENT_URI.buildUpon().appendPath("" + id).build();
+                Uri uri = FavoriteMovieContract.FavMovieEntry.CONTENT_URI.buildUpon().appendPath("" + id).build();
                 int rowsDeleted = getContentResolver().delete(uri, null, null);
                 if (rowsDeleted > 0) {
                     // restart loader to re-query
                     getSupportLoaderManager().restartLoader(FAV_MOVIES_LOADER_ID, null,
-                            FavouriteMoviesActivity.this);
+                            FavoriteMoviesActivity.this);
                 }
 
             }
@@ -103,9 +102,9 @@ public class FavouriteMoviesActivity extends AppCompatActivity
 
             @Override
             public Cursor loadInBackground() {
-                Log.e(TAG, "loadInBackground() called, ORDER BY " + FavouriteMoviesActivity.this.ORDER_BY_COLUMN + " " + ORDER_ASC_DESC);
+                Log.e(TAG, "loadInBackground() called, ORDER BY " + FavoriteMoviesActivity.this.ORDER_BY_COLUMN + " " + ORDER_ASC_DESC);
                 try {
-                    Uri uri = FavouriteMovieContract.FavMovieEntry.CONTENT_URI;
+                    Uri uri = FavoriteMovieContract.FavMovieEntry.CONTENT_URI;
                     return getContentResolver().query(uri,
                             null,
                             null,
@@ -171,26 +170,26 @@ public class FavouriteMoviesActivity extends AppCompatActivity
         // title defaults to ASCENDING sorting
         // date/timestamp sorting defaults to newest first
         if (itemId == R.id.action_sort_favs_title) {
-            if (ORDER_BY_COLUMN.equals(FavouriteMovieContract.FavMovieEntry.COLUMN_TITLE)) {
+            if (ORDER_BY_COLUMN.equals(FavoriteMovieContract.FavMovieEntry.COLUMN_TITLE)) {
                 ORDER_ASC_DESC = "DESC";
             } else {
                 ORDER_ASC_DESC = "ASC";
             }
-            this.ORDER_BY_COLUMN = FavouriteMovieContract.FavMovieEntry.COLUMN_TITLE;
+            this.ORDER_BY_COLUMN = FavoriteMovieContract.FavMovieEntry.COLUMN_TITLE;
         } else if (itemId == R.id.action_sort_favs_release_date) {
-            if (ORDER_BY_COLUMN.equals(FavouriteMovieContract.FavMovieEntry.COLUMN_DATE_RELEASED)) {
+            if (ORDER_BY_COLUMN.equals(FavoriteMovieContract.FavMovieEntry.COLUMN_DATE_RELEASED)) {
                 ORDER_ASC_DESC = "ASC";
             } else {
                 ORDER_ASC_DESC = "DESC";
             }
-            this.ORDER_BY_COLUMN = FavouriteMovieContract.FavMovieEntry.COLUMN_DATE_RELEASED;
+            this.ORDER_BY_COLUMN = FavoriteMovieContract.FavMovieEntry.COLUMN_DATE_RELEASED;
         } else if (itemId == R.id.action_sort_favs_timestamp_added) {
-            if (ORDER_BY_COLUMN.equals(FavouriteMovieContract.FavMovieEntry.COLUMN_TIMESTAMP_SAVED)) {
+            if (ORDER_BY_COLUMN.equals(FavoriteMovieContract.FavMovieEntry.COLUMN_TIMESTAMP_SAVED)) {
                 ORDER_ASC_DESC = "ASC";
             } else {
                 ORDER_ASC_DESC = "DESC";
             }
-            this.ORDER_BY_COLUMN = FavouriteMovieContract.FavMovieEntry.COLUMN_TIMESTAMP_SAVED;
+            this.ORDER_BY_COLUMN = FavoriteMovieContract.FavMovieEntry.COLUMN_TIMESTAMP_SAVED;
         }
 
         // restart loader

@@ -1,6 +1,5 @@
 package com.example.lotze.unclebenspopularmovies;
 
-import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -23,7 +22,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -36,7 +34,7 @@ import com.example.lotze.unclebenspopularmovies.data.MovieReview;
 import com.example.lotze.unclebenspopularmovies.data.MovieTMDb;
 import com.example.lotze.unclebenspopularmovies.data.TMDbImageSize;
 import com.example.lotze.unclebenspopularmovies.dataHandlers.ReviewAdapter;
-import com.example.lotze.unclebenspopularmovies.db.FavouriteMovieContract;
+import com.example.lotze.unclebenspopularmovies.db.FavoriteMovieContract;
 import com.example.lotze.unclebenspopularmovies.tools.JsonUtils;
 import com.example.lotze.unclebenspopularmovies.tools.NetworkUtils;
 import com.example.lotze.unclebenspopularmovies.tools.UrlHelpers;
@@ -241,11 +239,11 @@ public class MovieDetailsActivity extends AppCompatActivity
             TextView tvBudget = findViewById(R.id.tv_movie_budget);
             if (budget >= 1_000_000_000) {
                 float billions = budget / 1_000_000_000;
-                tvBudget.setText(String.valueOf(billions) + "  Billions");
+                tvBudget.setText(String.valueOf(billions) + " " + getString(R.string.billions));
             }
             else if (budget >= 1_000_000) {
                 float millions = budget / 1_000_000;
-                tvBudget.setText(String.valueOf(millions) + "  Millions");
+                tvBudget.setText(String.valueOf(millions) + " " + getString(R.string.millions));
             }
             else {
                 tvBudget.setText(String.valueOf(budget));
@@ -352,7 +350,7 @@ public class MovieDetailsActivity extends AppCompatActivity
         }
 
         if (isFavorite) {
-            btnFavoriteToggleText.setText(R.string.action_remove_favourite);
+            btnFavoriteToggleText.setText(R.string.action_remove_favorite);
             ivHeart.setImageResource(R.drawable.ic_favorite_accent_color_24dp);
             Log.d("MovieDetails", "changed text to 'Remove...'");
         } else {
@@ -367,7 +365,7 @@ public class MovieDetailsActivity extends AppCompatActivity
         int movieId = movie.getId();
 
         if (isFavorite) {
-            Uri uri = FavouriteMovieContract.FavMovieEntry.CONTENT_URI
+            Uri uri = FavoriteMovieContract.FavMovieEntry.CONTENT_URI
                     .buildUpon().appendPath(String.valueOf(favId)).build();
             Log.d("MovieDetails", "btnFavoriteToggle clicked -> delete from favs");
             int rowsDeleted = getContentResolver().delete(uri, null, null);
@@ -376,23 +374,23 @@ public class MovieDetailsActivity extends AppCompatActivity
         } else {
             Log.d("MovieDetails", "btnFavoriteToggle clicked -> inserting into DB");
             ContentValues values = new ContentValues();
-            values.put(FavouriteMovieContract.FavMovieEntry.COLUMN_MOVIE_ID, movie.getId());
-            values.put(FavouriteMovieContract.FavMovieEntry.COLUMN_TITLE, movie.getTitle());
-            values.put(FavouriteMovieContract.FavMovieEntry.COLUMN_POSTER_PATH,
+            values.put(FavoriteMovieContract.FavMovieEntry.COLUMN_MOVIE_ID, movie.getId());
+            values.put(FavoriteMovieContract.FavMovieEntry.COLUMN_TITLE, movie.getTitle());
+            values.put(FavoriteMovieContract.FavMovieEntry.COLUMN_POSTER_PATH,
                     movie.getPosterPath(null));
-            values.put(FavouriteMovieContract.FavMovieEntry.COLUMN_BACKDROP_PATH,
+            values.put(FavoriteMovieContract.FavMovieEntry.COLUMN_BACKDROP_PATH,
                     movie.getBackdropPath(null));
 
             // only release date needs to be stored manually, timestamp (when favorite was added) is automatic
-            values.put(FavouriteMovieContract.FavMovieEntry.COLUMN_DATE_RELEASED,
+            values.put(FavoriteMovieContract.FavMovieEntry.COLUMN_DATE_RELEASED,
                     movie.getReleaseDate());
 
             // TODO: TIMESTAMP DEFAULT CURRENT_TIMESTAMP only stores '2018' in database, find out why
             // manual value necessary
-            values.put(FavouriteMovieContract.FavMovieEntry.COLUMN_TIMESTAMP_SAVED,
+            values.put(FavoriteMovieContract.FavMovieEntry.COLUMN_TIMESTAMP_SAVED,
                     System.currentTimeMillis());
 
-            Uri uri = FavouriteMovieContract.FavMovieEntry.CONTENT_URI;
+            Uri uri = FavoriteMovieContract.FavMovieEntry.CONTENT_URI;
             Uri uriNewFavEntry = getContentResolver().insert(uri, values);
             if (uriNewFavEntry != null) {
                 Toast.makeText(getBaseContext(),
@@ -496,9 +494,9 @@ public class MovieDetailsActivity extends AppCompatActivity
                     @Override
                     public Boolean loadInBackground() {
                         Cursor cursor = MovieDetailsActivity.this.getContentResolver()
-                                .query(FavouriteMovieContract.FavMovieEntry.CONTENT_URI,
+                                .query(FavoriteMovieContract.FavMovieEntry.CONTENT_URI,
                                         null,
-                                        FavouriteMovieContract.FavMovieEntry.COLUMN_MOVIE_ID + "=" + movie.getId(),
+                                        FavoriteMovieContract.FavMovieEntry.COLUMN_MOVIE_ID + "=" + movie.getId(),
                                         null,
                                         null);
                         // TODO: check after having added favs that this is no longer null
@@ -519,7 +517,7 @@ public class MovieDetailsActivity extends AppCompatActivity
                         Log.d(TAG, "AsyncTaskLoader fav status: loadInBackground(): found " + count + " favorites with movie_id=" + movie.getId());
                         cursor.moveToPosition(0);
                         MovieDetailsActivity.this.favId = cursor.getInt(
-                                cursor.getColumnIndex(FavouriteMovieContract.FavMovieEntry._ID));
+                                cursor.getColumnIndex(FavoriteMovieContract.FavMovieEntry._ID));
                         cursor.close();
                         return (count > 0 ? true : false);
                     }
