@@ -30,6 +30,7 @@ Please add your TMDb API key in gradle.properties: TmdbApiKey="your_api_key"
 * Storing additional information about favorites to allow sorting by title, release date or timestamp when favorite has been added.
     * Re-selecting the same sorting reverses the order.
 * Swipe to remove favorite
+* Selecting favorite downloads movie details from /movie endpoint
 * Loading additional data in background threads for movie details: Youtube trailer thumbnails, additional movie information (imdb id, runtime, budget, genres).
 * Settings
     * Language for movie data

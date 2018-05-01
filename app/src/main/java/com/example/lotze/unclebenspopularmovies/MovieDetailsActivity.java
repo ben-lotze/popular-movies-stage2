@@ -229,9 +229,11 @@ public class MovieDetailsActivity extends AppCompatActivity
 
 
         int runtime = movie.getRuntime();
-        TextView tvRuntime = findViewById(R.id.tv_movie_runtime);
-        tvRuntime.setText(runtime + " Minutes");
-        tvRuntime.setVisibility(View.VISIBLE);
+        if (runtime > 0) {
+            TextView tvRuntime = findViewById(R.id.tv_movie_runtime);
+            tvRuntime.setText(String.valueOf(runtime) + " " + getString(R.string.minutes));
+            tvRuntime.setVisibility(View.VISIBLE);
+        }
 
         int budget = movie.getBudget();
         if (budget > 0) {
@@ -350,7 +352,7 @@ public class MovieDetailsActivity extends AppCompatActivity
         }
 
         if (isFavorite) {
-            btnFavoriteToggleText.setText(R.string.action_remove_favorite);
+            btnFavoriteToggleText.setText(getString(R.string.action_remove_favorite));
             ivHeart.setImageResource(R.drawable.ic_favorite_accent_color_24dp);
             Log.d("MovieDetails", "changed text to 'Remove...'");
         } else {

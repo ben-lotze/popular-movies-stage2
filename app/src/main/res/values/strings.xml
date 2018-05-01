@@ -63,5 +63,6 @@
     <string name="search_label_amazon">Amazon</string>
     <string name="billions">Billions</string>
     <string name="millions">Millions</string>
+    <string name="minutes">Minutes</string>
 
 </resources>
