@@ -32,6 +32,7 @@ Please add your TMDb API key in gradle.properties: TmdbApiKey="your_api_key"
     * user can tap a button to mark it as a Favorite.
 
 #### Network / Threading / Background Threads
+* UI gets populated after data was loaded with Loader in background task
 * Queries the /movie/popular or /movie/top_rated API for the sort criteria specified in the settings menu.
 * Requests related videos for a selected movie via the /movie/{id}/videos endpoint.
 * Requests user reviews for a selected movie via the /movie/{id}/reviews endpoint.
@@ -41,14 +42,17 @@ Please add your TMDb API key in gradle.properties: TmdbApiKey="your_api_key"
 * Titles and IDs of the user’s favorite movies are stored in a native SQLite database and are exposed via a ContentProvider.
 * Saving instance state on rotation (implemented with ViewModel from android.arch.lifecycle)
 
+
 #### Additional features (not required)
 * Navigation Drawer
 * Endless scrolling for movies from web source (automatic loading of more pages on background thread)
 * Storing additional information about favorites to allow sorting by title, release date or timestamp when favorite has been added.
     * Re-selecting the same sorting reverses the order.
 * Swipe to remove favorite
-* Selecting a favorite from Favorites downloads th movie details in a background thread from TMDb's /movie endpoint by id (no movie data that could change is stored in SQLite database for a favorite)
-* Loading additional data in background threads for movie details: Youtube trailer thumbnails, additional movie information (imdb id, runtime, budget, genres).
+* Selecting a favorite from Favorites downloads the movie details in a background thread from TMDb's /movie endpoint by id (no movie data that could change is stored in SQLite database for a favorite)
+* Loading additional data in multiple Loader background threads for movie details (each content getting populated in UI as soon as possible): 
+	* Youtube trailer thumbnails (parsed from downloaded JSON from oEmbed-endpoint at "youtube.com/oembed")
+	* additional movie information (imdb id for link to IMDb page, runtime, budget, genres).
 * Settings
     * Language for movie data
     * JSON parsing engine (Google Gson or "bare hands")
